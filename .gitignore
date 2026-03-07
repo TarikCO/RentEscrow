@@ -16,6 +16,12 @@
 # Hardhat coverage reports
 /coverage
 
-/__pycache__
+**/*.env
 
-.env
+backend/venv/
+
+**/__pycache__/
+
+blockchain/artifacts/
+
+blockchain/cache/
