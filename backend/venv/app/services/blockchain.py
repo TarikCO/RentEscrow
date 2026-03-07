@@ -15,13 +15,16 @@ class BlockchainService:
         
         # 2. PLACEHOLDER: Contract Address
         # Replace this string after you run: npx hardhat ignition deploy ...
-        self.contract_address = "0x0000000000000000000000000000000000000000"
+        self.contract_address = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+
+        # landlord address
+        self.landlord_address = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
         
         # 3. Load the ABI from your Hardhat artifacts
         self.abi = self._load_abi()
         
         # 4. Initialize the contract object
-        if self.abi and self.contract_address != "0x0000000000000000000000000000000000000000":
+        if self.abi and self.contract_address != "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512":
             self.contract = self.w3.eth.contract(
                 address=self.w3.to_checksum_address(self.contract_address), 
                 abi=self.abi
