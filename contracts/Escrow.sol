@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
 contract Escrow {
@@ -8,11 +9,16 @@ contract Escrow {
     bool public delivered;
     uint public deadline;
 
+    // rating system
+    uint public totalRating;
+    uint public numRatings;
+
     // events 
     event Deposited(address indexed from, uint value);
     event Delivered();
     event Released(uint value);
     event Refunded(uint value);
+    event Rated(address indexed by, uint score);
 
     // main constructor
     constructor(address _seller, uint _durationSeconds) payable {
@@ -31,7 +37,7 @@ contract Escrow {
         emit Deposited(msg.sender, msg.value);
     }
 
-    // function to confirm transaction - returns boolean
+    // function to confirm transaction
     function confirmDelivery() public {
         require(msg.sender == buyer, "Only buyer can confirm delivery");
         delivered = true;
@@ -52,5 +58,21 @@ contract Escrow {
         require(block.timestamp >= deadline, "Too early to refund");
         payable(buyer).transfer(amount);
         emit Refunded(amount);
+    }
+
+    // rate the seller after delivery (1-5)
+    function rateSeller(uint score) public {
+        require(msg.sender == buyer, "Only buyer can rate");
+        require(delivered, "Delivery not confirmed");
+        require(score >= 1 && score <= 5, "Score must be 1-5");
+        totalRating += score;
+        numRatings += 1;
+        emit Rated(msg.sender, score);
+    }
+
+    // get average rating
+    function getAverageRating() public view returns (uint) {
+        if (numRatings == 0) return 0;
+        return totalRating / numRatings;
     }
 }
