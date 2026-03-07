@@ -1,0 +1,35 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_20-fa6145572634e49a0da93a4d7f72dd402ec8d92f",
+  "solcVersion": "0.8.20",
+  "solcLongVersion": "0.8.20+commit.a1b79de6",
+  "userSourceNameMap": {
+    "contracts/RentEscrow.sol": "project/contracts/RentEscrow.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "shanghai",
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/RentEscrow.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.20;\r\n\r\ncontract RentEscrow {\r\n    address public tenant; // buyer\r\n    address public landlord; // seller\r\n    uint public amount; // rent amount\r\n    bool public confirmed; // delivery confirmed (lease accepted)\r\n    uint public deadline; // timestamp for refund\r\n    uint public yieldPercent; // like 3%\r\n\r\n    // rating system\r\n    uint public totalRating;\r\n    uint public numRatings;\r\n\r\n    // events\r\n    event Deposited(address indexed from, uint value);\r\n    event Confirmed();\r\n    event Released(uint value, uint yield);\r\n    event Refunded(uint value);\r\n    event Rated(address indexed by, uint score);\r\n\r\n    constructor(address _landlord, uint _durationSeconds, uint _yieldPercent) payable {\r\n        tenant = msg.sender;\r\n        landlord = _landlord;\r\n        amount = msg.value;\r\n        yieldPercent = _yieldPercent;\r\n        deadline = block.timestamp + _durationSeconds;\r\n        require(amount > 0, \"Send ETH to escrow\");\r\n        emit Deposited(msg.sender, amount);\r\n    }\r\n\r\n    function deposit() public payable {\r\n        require(msg.sender == tenant, \"Only tenant can deposit\");\r\n        require(msg.value == amount, \"Incorrect deposit amount\");\r\n        emit Deposited(msg.sender, msg.value);\r\n    }\r\n\r\n    function confirmLease() public {\r\n        require(msg.sender == tenant, \"Only tenant can confirm lease\");\r\n        confirmed = true;\r\n        emit Confirmed();\r\n    }\r\n\r\n    function releaseFunds() public {\r\n        require(confirmed, \"Lease not confirmed\");\r\n        uint yieldAmount = (amount * yieldPercent) / 100;\r\n        payable(landlord).transfer(amount);\r\n        payable(tenant).transfer(yieldAmount);\r\n        emit Released(amount, yieldAmount);\r\n    }\r\n\r\n    function refund() public {\r\n        require(msg.sender == tenant, \"Only tenant can refund\");\r\n        require(!confirmed, \"Already confirmed\");\r\n        require(block.timestamp >= deadline, \"Too early to refund\");\r\n        payable(tenant).transfer(amount);\r\n        emit Refunded(amount);\r\n    }\r\n\r\n    // rate landlord\r\n    function rateLandlord(uint score) public {\r\n        require(msg.sender == tenant, \"Only tenant can rate\");\r\n        require(confirmed, \"Lease not confirmed\");\r\n        require(score >= 1 && score <= 5, \"Score 1-5\");\r\n        totalRating += score;\r\n        numRatings += 1;\r\n        emit Rated(msg.sender, score);\r\n    }\r\n\r\n    function getAverageRating() public view returns (uint) {\r\n        if (numRatings == 0) return 0;\r\n        return totalRating / numRatings;\r\n    }\r\n}"
+      }
+    }
+  }
+}
