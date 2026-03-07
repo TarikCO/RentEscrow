@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,58 +6,57 @@
 
 @layer base {
   :root {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 96%;
+    --background: 51 33% 95%;
+    --foreground: 219 40% 14%;
 
-    --card: 222 44% 9%;
-    --card-foreground: 210 40% 96%;
+    --card: 0 0% 100%;
+    --card-foreground: 219 40% 14%;
 
-    --popover: 222 44% 9%;
-    --popover-foreground: 210 40% 96%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 219 40% 14%;
 
-    --primary: 174 72% 51%;
-    --primary-foreground: 222 47% 6%;
+    --primary: 159 88% 30%;
+    --primary-foreground: 55 43% 96%;
 
-    --secondary: 222 30% 14%;
-    --secondary-foreground: 210 40% 90%;
+    --secondary: 38 54% 90%;
+    --secondary-foreground: 219 40% 14%;
 
-    --muted: 222 30% 14%;
-    --muted-foreground: 215 20% 55%;
+    --muted: 51 28% 89%;
+    --muted-foreground: 219 14% 39%;
 
-    --accent: 174 72% 51%;
-    --accent-foreground: 222 47% 6%;
+    --accent: 21 91% 45%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 74% 46%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 222 30% 18%;
-    --input: 222 30% 18%;
-    --ring: 174 72% 51%;
+    --border: 43 20% 78%;
+    --input: 43 20% 78%;
+    --ring: 159 88% 30%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 222 44% 7%;
-    --sidebar-foreground: 210 40% 90%;
-    --sidebar-primary: 174 72% 51%;
-    --sidebar-primary-foreground: 222 47% 6%;
-    --sidebar-accent: 222 30% 14%;
-    --sidebar-accent-foreground: 210 40% 90%;
-    --sidebar-border: 222 30% 18%;
-    --sidebar-ring: 174 72% 51%;
+    --sidebar-background: 52 27% 92%;
+    --sidebar-foreground: 219 40% 14%;
+    --sidebar-primary: 159 88% 30%;
+    --sidebar-primary-foreground: 55 43% 96%;
+    --sidebar-accent: 51 28% 89%;
+    --sidebar-accent-foreground: 219 40% 14%;
+    --sidebar-border: 43 20% 78%;
+    --sidebar-ring: 159 88% 30%;
 
-    /* Custom tokens */
-    --glow: 174 72% 51%;
-    --glow-secondary: 199 89% 48%;
-    --surface: 222 40% 11%;
-    --surface-hover: 222 35% 15%;
+    --glow: 159 88% 30%;
+    --glow-secondary: 21 91% 45%;
+    --surface: 51 28% 89%;
+    --surface-hover: 50 23% 85%;
     --success: 152 69% 46%;
     --warning: 38 92% 50%;
-    --gradient-primary: linear-gradient(135deg, hsl(174 72% 51%), hsl(199 89% 48%));
-    --gradient-hero: linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 44% 9%) 50%, hsl(222 47% 6%) 100%);
-    --shadow-glow: 0 0 30px -5px hsl(174 72% 51% / 0.3);
-    --shadow-card: 0 4px 24px -4px hsl(0 0% 0% / 0.4);
+    --gradient-primary: linear-gradient(135deg, hsl(159 88% 30%), hsl(21 91% 45%));
+    --gradient-hero: linear-gradient(180deg, hsl(51 33% 95%) 0%, hsl(45 43% 90%) 60%, hsl(51 33% 95%) 100%);
+    --shadow-glow: 0 0 30px -5px hsl(159 88% 30% / 0.3);
+    --shadow-card: 0 4px 24px -10px hsl(219 40% 14% / 0.3);
 
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Sora', sans-serif;
   }
 }
 
@@ -68,13 +67,18 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Sora', sans-serif;
+    min-height: 100vh;
   }
 }
 
 @layer utilities {
   .font-mono {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .font-serif {
+    font-family: 'Fraunces', serif;
   }
 
   .glass {
@@ -99,6 +103,10 @@
   .animate-pulse-glow {
     animation: pulse-glow 3s ease-in-out infinite;
   }
+
+  .animate-rise {
+    animation: rise 0.5s ease-out both;
+  }
 }
 
 @keyframes float {
@@ -107,6 +115,17 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px -5px hsl(174 72% 51% / 0.2); }
-  50% { box-shadow: 0 0 40px -5px hsl(174 72% 51% / 0.4); }
+  0%, 100% { box-shadow: 0 0 20px -5px hsl(159 88% 30% / 0.2); }
+  50% { box-shadow: 0 0 40px -5px hsl(159 88% 30% / 0.4); }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
