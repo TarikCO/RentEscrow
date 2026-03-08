@@ -35,6 +35,21 @@ const DashboardPage = ({ walletAddress }: DashboardPageProps) => {
   return (
     <div className="space-y-6">
       <section className="grid gap-4 md:grid-cols-4">
+<<<<<<< HEAD
+        <Card className="border-slate-700/80 bg-slate-900/55 text-slate-100 backdrop-blur-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Total Escrows</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold text-slate-100">{escrowStats.totalEscrows}</CardContent>
+        </Card>
+        <Card className="border-slate-700/80 bg-slate-900/55 text-slate-100 backdrop-blur-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Escrow Value</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold text-slate-100">{escrowStats.totalValueEth} ETH</CardContent>
+        </Card>
+        <Card className="border-slate-700/80 bg-slate-900/55 text-slate-100 backdrop-blur-sm">
+=======
         <Card className="border-stone-300/80 bg-white/90">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">Total Escrows</CardTitle>
@@ -48,12 +63,17 @@ const DashboardPage = ({ walletAddress }: DashboardPageProps) => {
           <CardContent className="text-2xl font-semibold text-slate-900">{escrowStats.totalValueEth} ETH</CardContent>
         </Card>
         <Card className="border-stone-300/80 bg-white/90">
+>>>>>>> b14b8433d5e8c04454c2622ac97c931bd7b5f35d
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">Pending</CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-semibold text-amber-600">{escrowStats.pending}</CardContent>
         </Card>
+<<<<<<< HEAD
+        <Card className="border-slate-700/80 bg-slate-900/55 text-slate-100 backdrop-blur-sm">
+=======
         <Card className="border-stone-300/80 bg-white/90">
+>>>>>>> b14b8433d5e8c04454c2622ac97c931bd7b5f35d
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">Confirmed</CardTitle>
           </CardHeader>
@@ -78,9 +98,15 @@ const DashboardPage = ({ walletAddress }: DashboardPageProps) => {
       ) : null}
 
       {noEscrows ? (
+<<<<<<< HEAD
+        <Card className="border-dashed border-slate-600 bg-slate-900/50 text-center text-slate-100 backdrop-blur-sm">
+          <CardContent className="space-y-4 py-10">
+            <p className="text-lg font-medium text-slate-100">You currently have no escrow contracts</p>
+=======
         <Card className="border-dashed border-stone-400 bg-white/80 text-center">
           <CardContent className="space-y-4 py-10">
             <p className="text-lg font-medium text-slate-900">You currently have no escrow contracts</p>
+>>>>>>> b14b8433d5e8c04454c2622ac97c931bd7b5f35d
             <Button onClick={() => setShowCreateForm(true)}>Create New Escrow</Button>
           </CardContent>
         </Card>

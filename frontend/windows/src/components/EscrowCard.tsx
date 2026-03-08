@@ -38,17 +38,43 @@ const EscrowCard = ({
   const refundEnabled = escrowService.canRefund(escrow);
 
   return (
+<<<<<<< HEAD
+    <Card className="h-full border-slate-700/80 bg-slate-900/55 text-slate-100 shadow-lg shadow-slate-950/20 backdrop-blur-sm">
+      <CardHeader className="space-y-4">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Escrow Contract</p>
+            <CardTitle className="font-mono text-sm text-slate-100">{formatAddress(escrow.address)}</CardTitle>
+=======
     <Card className="h-full border-stone-300/80 bg-white/90 shadow-lg shadow-slate-900/5">
       <CardHeader className="space-y-4">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Escrow Contract</p>
             <CardTitle className="font-mono text-sm text-slate-900">{formatAddress(escrow.address)}</CardTitle>
+>>>>>>> b14b8433d5e8c04454c2622ac97c931bd7b5f35d
           </div>
           <Badge variant={escrow.status === "pending" ? "secondary" : "default"}>{escrowService.statusLabel(escrow.status)}</Badge>
         </div>
 
         <div className="grid grid-cols-2 gap-2 text-sm">
+<<<<<<< HEAD
+          <div className="rounded-md bg-slate-800/80 p-2">
+            <p className="text-xs text-slate-400">Rent Amount</p>
+            <p className="font-semibold text-slate-100">{escrow.rentAmountEth} ETH</p>
+          </div>
+          <div className="rounded-md bg-slate-800/80 p-2">
+            <p className="text-xs text-slate-400">Yield</p>
+            <p className="font-semibold text-emerald-700">{escrow.yieldPercent}%</p>
+          </div>
+          <div className="rounded-md bg-slate-800/80 p-2">
+            <p className="text-xs text-slate-400">Tenant</p>
+            <p className="font-mono text-xs text-slate-200">{formatAddress(escrow.tenant)}</p>
+          </div>
+          <div className="rounded-md bg-slate-800/80 p-2">
+            <p className="text-xs text-slate-400">Landlord</p>
+            <p className="font-mono text-xs text-slate-200">{formatAddress(escrow.landlord)}</p>
+=======
           <div className="rounded-md bg-slate-100 p-2">
             <p className="text-xs text-slate-500">Rent Amount</p>
             <p className="font-semibold text-slate-900">{escrow.rentAmountEth} ETH</p>
@@ -64,12 +90,17 @@ const EscrowCard = ({
           <div className="rounded-md bg-slate-100 p-2">
             <p className="text-xs text-slate-500">Landlord</p>
             <p className="font-mono text-xs text-slate-800">{formatAddress(escrow.landlord)}</p>
+>>>>>>> b14b8433d5e8c04454c2622ac97c931bd7b5f35d
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
+<<<<<<< HEAD
+        <div className="flex items-center justify-between rounded-md border border-slate-700 bg-slate-800/65 px-3 py-2 text-sm text-slate-200">
+=======
         <div className="flex items-center justify-between rounded-md border border-stone-300 bg-stone-50 px-3 py-2 text-sm text-slate-700">
+>>>>>>> b14b8433d5e8c04454c2622ac97c931bd7b5f35d
           <span className="inline-flex items-center gap-2">
             <Clock3 className="h-4 w-4" />
             Refund Deadline
@@ -77,7 +108,11 @@ const EscrowCard = ({
           <span className="font-mono text-xs">{formatDate(escrow.deadline)}</span>
         </div>
 
+<<<<<<< HEAD
+        <div className="flex items-center justify-between text-sm text-slate-200">
+=======
         <div className="flex items-center justify-between text-sm text-slate-700">
+>>>>>>> b14b8433d5e8c04454c2622ac97c931bd7b5f35d
           <span className="inline-flex items-center gap-2">
             <Star className="h-4 w-4 text-amber-500" />
             Landlord Rating

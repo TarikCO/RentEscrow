@@ -6,6 +6,28 @@
 
 @layer base {
   :root {
+<<<<<<< HEAD
+    --background: 220 13% 13%;
+    --foreground: 210 35% 95%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 28% 13%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 28% 13%;
+
+    --primary: 156 72% 42%;
+    --primary-foreground: 220 28% 13%;
+
+    --secondary: 220 14% 22%;
+    --secondary-foreground: 210 35% 95%;
+
+    --muted: 220 14% 22%;
+    --muted-foreground: 210 16% 70%;
+
+    --accent: 156 64% 38%;
+    --accent-foreground: 220 28% 13%;
+=======
     --background: 51 33% 95%;
     --foreground: 219 40% 14%;
 
@@ -26,10 +48,38 @@
 
     --accent: 21 91% 45%;
     --accent-foreground: 0 0% 100%;
+>>>>>>> b14b8433d5e8c04454c2622ac97c931bd7b5f35d
 
     --destructive: 0 74% 46%;
     --destructive-foreground: 210 40% 98%;
 
+<<<<<<< HEAD
+    --border: 215 15% 30%;
+    --input: 215 15% 30%;
+    --ring: 156 72% 42%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 220 15% 16%;
+    --sidebar-foreground: 210 35% 95%;
+    --sidebar-primary: 156 72% 42%;
+    --sidebar-primary-foreground: 220 28% 13%;
+    --sidebar-accent: 220 14% 22%;
+    --sidebar-accent-foreground: 210 35% 95%;
+    --sidebar-border: 215 15% 30%;
+    --sidebar-ring: 156 72% 42%;
+
+    --glow: 156 72% 42%;
+    --glow-secondary: 163 66% 44%;
+    --surface: 220 14% 22%;
+    --surface-hover: 220 14% 26%;
+    --success: 172 56% 53%;
+    --warning: 37 90% 57%;
+    --gradient-primary: linear-gradient(135deg, hsl(156 72% 42%), hsl(163 66% 44%));
+    --gradient-hero: linear-gradient(180deg, hsl(220 13% 13%) 0%, hsl(220 13% 13%) 100%);
+    --shadow-glow: 0 0 32px -8px hsl(156 72% 42% / 0.35);
+    --shadow-card: 0 6px 28px -12px hsl(220 30% 6% / 0.65);
+=======
     --border: 43 20% 78%;
     --input: 43 20% 78%;
     --ring: 159 88% 30%;
@@ -55,6 +105,7 @@
     --gradient-hero: linear-gradient(180deg, hsl(51 33% 95%) 0%, hsl(45 43% 90%) 60%, hsl(51 33% 95%) 100%);
     --shadow-glow: 0 0 30px -5px hsl(159 88% 30% / 0.3);
     --shadow-card: 0 4px 24px -10px hsl(219 40% 14% / 0.3);
+>>>>>>> b14b8433d5e8c04454c2622ac97c931bd7b5f35d
 
     font-family: 'Sora', sans-serif;
   }
@@ -115,8 +166,13 @@
 }
 
 @keyframes pulse-glow {
+<<<<<<< HEAD
+  0%, 100% { box-shadow: 0 0 20px -5px hsl(156 72% 42% / 0.2); }
+  50% { box-shadow: 0 0 40px -5px hsl(156 72% 42% / 0.4); }
+=======
   0%, 100% { box-shadow: 0 0 20px -5px hsl(159 88% 30% / 0.2); }
   50% { box-shadow: 0 0 40px -5px hsl(159 88% 30% / 0.4); }
+>>>>>>> b14b8433d5e8c04454c2622ac97c931bd7b5f35d
 }
 
 @keyframes rise {
