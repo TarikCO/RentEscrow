@@ -1,11 +1,12 @@
 import { defineConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox";
+import hardhatToolboxMochaEthers from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
 import * as dotenv from "dotenv";
 
 // connects to the root env file
 dotenv.config({ path: "../.env" });
 
 const config = defineConfig({
+  plugins: [hardhatToolboxMochaEthers],
   solidity: "0.8.20",
   networks: {
     localhost: {

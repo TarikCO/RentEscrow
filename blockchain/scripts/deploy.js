@@ -1,7 +1,7 @@
-import hre from 'hardhat';
-const { ethers } = hre;
+import hre from "hardhat";
 
 async function main() {
+  const { ethers } = await hre.network.connect();
 
   // Get deployer account
   const [deployer] = await ethers.getSigners();
