@@ -4,6 +4,7 @@ import LandlordRatingCard from "@/components/LandlordRatingCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useLandlordRatings } from "@/hooks/useLandlordRatings";
+import { useOnChainRating } from "@/hooks/useOnChainRating";
 import { RatingSortOption } from "@/types/escrow";
 
 const sortLabels: Record<RatingSortOption, string> = {
@@ -18,6 +19,7 @@ const LandlordRatingsPage = () => {
   const [selectedLandlord, setSelectedLandlord] = useState<string | null>(null);
 
   const list = useLandlordRatings(search, sort);
+  const { data: onChainRating, loading: onChainLoading, error: onChainError, refresh: refreshOnChain } = useOnChainRating();
 
   const selected = useMemo(
     () => list.find((item) => item.landlord.toLowerCase() === selectedLandlord?.toLowerCase()) ?? null,
@@ -51,6 +53,25 @@ const LandlordRatingsPage = () => {
               </option>
             ))}
           </select>
+        </div>
+
+        <div className="mt-4 rounded-md border border-slate-700 bg-slate-800/65 p-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-slate-300">On-chain landlord rating summary</p>
+            <button
+              type="button"
+              onClick={() => void refreshOnChain()}
+              className="rounded-md border border-slate-500 px-3 py-1 text-xs text-slate-100"
+            >
+              Refresh
+            </button>
+          </div>
+          {onChainError ? <p className="mt-2 text-sm text-red-400">{onChainError}</p> : null}
+          <p className="mt-2 text-sm text-slate-200">
+            {onChainLoading
+              ? "Loading on-chain rating..."
+              : `${onChainRating.average_rating.toFixed(2)} average rating (${onChainRating.num_ratings} ratings)`}
+          </p>
         </div>
       </section>
 

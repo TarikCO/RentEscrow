@@ -1,5 +1,5 @@
 import { AlertTriangle, PlusCircle } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import CreateEscrowForm from "@/components/CreateEscrowForm";
 import EscrowCard from "@/components/EscrowCard";
@@ -7,7 +7,10 @@ import EscrowDetailsView from "@/components/EscrowDetailsView";
 import EscrowTable from "@/components/EscrowTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useBackendDashboard } from "@/hooks/useBackendDashboard";
 import { useEscrows } from "@/hooks/useEscrows";
+import { useSecurityScore } from "@/hooks/useSecurityScore";
 import { EscrowContract } from "@/types/escrow";
 
 interface DashboardPageProps {
@@ -29,8 +32,36 @@ const DashboardPage = ({ walletAddress }: DashboardPageProps) => {
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedEscrow, setSelectedEscrow] = useState<EscrowContract | null>(null);
+  const [securityAddress, setSecurityAddress] = useState(walletAddress ?? "");
+
+  const {
+    data: backendSnapshot,
+    loading: backendLoading,
+    error: backendError,
+    refresh: refreshBackendSnapshot,
+  } = useBackendDashboard();
+
+  const {
+    data: securityData,
+    loading: securityLoading,
+    error: securityError,
+    refetch: refetchSecurity,
+  } = useSecurityScore(securityAddress);
+
+  useEffect(() => {
+    if (walletAddress) {
+      setSecurityAddress(walletAddress);
+    }
+  }, [walletAddress]);
 
   const noEscrows = useMemo(() => !loading && escrows.length === 0, [escrows.length, loading]);
+
+  const flaggedRisks = useMemo(() => {
+    if (!securityData) return [];
+    return Object.entries(securityData.risk_details)
+      .filter(([, value]) => value)
+      .map(([key]) => key.split("_").join(" "));
+  }, [securityData]);
 
   return (
     <div className="space-y-6">
@@ -60,6 +91,108 @@ const DashboardPage = ({ walletAddress }: DashboardPageProps) => {
           <CardContent className="text-2xl font-semibold text-emerald-700">{escrowStats.confirmed}</CardContent>
         </Card>
       </section>
+
+      <Card className="border-slate-700/80 bg-slate-900/55 text-slate-100 backdrop-blur-sm">
+        <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <CardTitle className="text-lg">Live Backend Snapshot</CardTitle>
+            <p className="text-sm text-slate-300">Frontend → FastAPI → Web3.py → Hardhat</p>
+          </div>
+          <Button variant="outline" className="border-slate-500 text-slate-100" onClick={refreshBackendSnapshot}>
+            Refresh Snapshot
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {backendError ? (
+            <div className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {backendError}
+            </div>
+          ) : null}
+
+          {backendLoading ? <p className="text-sm text-slate-300">Loading backend status...</p> : null}
+
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div className="rounded-md bg-slate-800/75 p-3">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Escrow Balance</p>
+              <p className="text-base font-semibold">{backendSnapshot.escrowBalanceEth.toFixed(4)} ETH</p>
+            </div>
+            <div className="rounded-md bg-slate-800/75 p-3">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Transaction Status</p>
+              <p className="text-base font-semibold">{backendSnapshot.transactionStatus}</p>
+            </div>
+            <div className="rounded-md bg-slate-800/75 p-3">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Landlord Rating</p>
+              <p className="text-base font-semibold">
+                {backendSnapshot.landlordAverageRating.toFixed(2)} ({backendSnapshot.landlordNumRatings} ratings)
+              </p>
+            </div>
+            <div className="rounded-md bg-slate-800/75 p-3">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Refund Deadline</p>
+              <p className="text-sm font-medium">
+                {backendSnapshot.refundDeadline
+                  ? new Date(backendSnapshot.refundDeadline).toLocaleString()
+                  : "Not available"}
+              </p>
+            </div>
+            <div className="rounded-md bg-slate-800/75 p-3">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Tenant Address</p>
+              <p className="font-mono text-xs">{backendSnapshot.tenantAddress ?? walletAddress ?? "Not available"}</p>
+            </div>
+            <div className="rounded-md bg-slate-800/75 p-3">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Landlord Address</p>
+              <p className="font-mono text-xs">{backendSnapshot.landlordAddress ?? "Not available"}</p>
+            </div>
+          </div>
+
+          {!backendSnapshot.blockchainConnected ? (
+            <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+              Blockchain node appears disconnected. Start Hardhat node and retry.
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
+
+      <Card className="border-slate-700/80 bg-slate-900/55 text-slate-100 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="text-lg">Wallet Security Check</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid gap-3 md:grid-cols-[1fr_auto]">
+            <Input
+              value={securityAddress}
+              onChange={(event) => setSecurityAddress(event.target.value)}
+              placeholder="0x..."
+              className="font-mono"
+            />
+            <Button onClick={() => void refetchSecurity()} disabled={securityLoading}>
+              {securityLoading ? "Checking..." : "Check Security"}
+            </Button>
+          </div>
+
+          {securityError ? (
+            <div className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">{securityError}</div>
+          ) : null}
+
+          {securityData ? (
+            <div className="grid gap-3 md:grid-cols-3">
+              <div className="rounded-md bg-slate-800/75 p-3">
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Trust Score</p>
+                <p className="text-base font-semibold">{securityData.trust_score} / 100</p>
+              </div>
+              <div className="rounded-md bg-slate-800/75 p-3">
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Risk Level</p>
+                <p className="text-base font-semibold text-amber-400">
+                  {securityData.high_risk ? "High Risk Address" : "No High Risk Flags"}
+                </p>
+              </div>
+              <div className="rounded-md bg-slate-800/75 p-3">
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Risk Flags</p>
+                <p className="text-sm">{flaggedRisks.length ? flaggedRisks.join(", ") : "None"}</p>
+              </div>
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
 
       <div className="flex flex-wrap items-center gap-3">
         <Button onClick={() => setShowCreateForm((prev) => !prev)}>

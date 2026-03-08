@@ -6,8 +6,26 @@ settings = get_settings()
 def get_address_security_score(address: str):
     # API endpoint for the Malicious Address check
     url = f"https://api.gopluslabs.io/api/v1/address_security/{address}?chain_id={settings.chain_id}"
-    response = requests.get(url)
-    data = response.json()
+    try:
+        response = requests.get(url, timeout=12)
+        response.raise_for_status()
+        data = response.json()
+    except requests.RequestException as exc:
+        return {
+            "address": address,
+            "high_risk": False,
+            "trust_score": 0,
+            "risk_details": {
+                "phishing": False,
+                "blacklisted": False,
+                "honeypot_related": False,
+                "sanctioned": False,
+                "mixer": False,
+                "poisoned": False,
+            },
+            "error": f"Security provider request failed: {exc}",
+            "raw_data": {},
+        }
     result = data.get("result", {})
 
     # Advanced Security Flags
