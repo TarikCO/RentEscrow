@@ -14,10 +14,10 @@ class BlockchainService:
         # 1. Connect to the local Hardhat node
         self.w3 = Web3(Web3.HTTPProvider(HARDHAT_URL))
         
-        # Replace this string after you run: npx hardhat ignition deploy ...
+        # 2. Load the contract address from .env
         self.contract_address = settings.rent_escrow_address
 
-        # landlord address
+        # Load landlord address from .env
         self.landlord_address = settings.landlord_address
         
         # 3. Load ABI/bytecode from Hardhat artifacts

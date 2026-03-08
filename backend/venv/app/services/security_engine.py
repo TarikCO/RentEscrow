@@ -33,9 +33,9 @@ def get_address_security_score(address: str):
         "phishing": result.get("phishing_activities") == "1",
         "blacklisted": result.get("blacklisted") == "1",
         "honeypot_related": result.get("honeypot_related_address") == "1",
-        "sanctioned": result.get("sanctioned") == "1", # High priority for FinTech
-        "mixer": result.get("mixer") == "1",           # Often used to hide stolen funds
-        "poisoned": result.get("address_poisoned") == "1" # Catch Dust/Shadow attacks
+        "sanctioned": result.get("sanctioned") == "1", 
+        "mixer": result.get("mixer") == "1",         
+        "poisoned": result.get("address_poisoned") == "1" 
     }
 
     # Determine a risk level for the React frontend
@@ -51,6 +51,6 @@ def get_address_security_score(address: str):
         "address": address,
         "high_risk": is_malicious,
         "trust_score": score,
-        "risk_details": risk_factors, # Send specific flags to the frontend
+        "risk_details": risk_factors, 
         "raw_data": result
     }
