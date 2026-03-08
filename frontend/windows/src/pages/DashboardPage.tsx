@@ -28,6 +28,8 @@ const DashboardPage = ({ walletAddress }: DashboardPageProps) => {
     releaseFunds,
     requestRefund,
     rateLandlord,
+    removeEscrow,
+    clearEscrows,
   } = useEscrows(walletAddress ?? undefined);
 
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -199,6 +201,34 @@ const DashboardPage = ({ walletAddress }: DashboardPageProps) => {
           <PlusCircle className="h-4 w-4" />
           {showCreateForm ? "Hide Create Form" : "Create New Escrow"}
         </Button>
+        <Button
+          variant="outline"
+          className="border-red-300 text-red-700 hover:bg-red-50"
+          onClick={() => {
+            const ok = window.confirm("Remove all escrows from this dashboard list? This does not delete on-chain contracts.");
+            if (ok) {
+              void clearEscrows();
+              setSelectedEscrow(null);
+            }
+          }}
+        >
+          Clear Escrow List
+        </Button>
+        {selectedEscrow ? (
+          <Button
+            variant="outline"
+            className="border-amber-300 text-amber-700 hover:bg-amber-50"
+            onClick={() => {
+              const ok = window.confirm(`Remove ${selectedEscrow.address} from dashboard list?`);
+              if (ok) {
+                void removeEscrow(selectedEscrow.address);
+                setSelectedEscrow(null);
+              }
+            }}
+          >
+            Remove Selected Escrow
+          </Button>
+        ) : null}
       </div>
 
       {showCreateForm ? <CreateEscrowForm walletAddress={walletAddress} onCreate={createEscrow} /> : null}
