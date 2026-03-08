@@ -38,10 +38,10 @@ class RateRequest(BaseModel):
 
 
 def latest_escrow_address_or_503():
-    address = blockchain_service.latest_escrow_address()
-    if not address:
+    records = blockchain_service.get_all_escrows()
+    if not records:
         raise HTTPException(status_code=404, detail="No escrow contracts found.")
-    return address
+    return records[-1]["address"]
 
 
 def ensure_blockchain_connected():

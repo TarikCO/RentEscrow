@@ -283,8 +283,11 @@ class BlockchainService:
             return "Pending Confirmation"
         except Exception:
             # Backward compatibility with older single-confirmation deployments.
-            is_confirmed = contract.functions.confirmed().call()
-            return "Confirmed" if is_confirmed else "In Progress"
+            try:
+                is_confirmed = contract.functions.confirmed().call()
+                return "Confirmed" if is_confirmed else "In Progress"
+            except Exception:
+                return "Status Unavailable"
     
     def get_landlord_rating(self, escrow_address: str | None = None):
         contract, _ = self._get_contract(escrow_address)
