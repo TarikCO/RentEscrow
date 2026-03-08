@@ -65,6 +65,14 @@ const DashboardPage = ({ walletAddress }: DashboardPageProps) => {
       .map(([key]) => key.split("_").join(" "));
   }, [securityData]);
 
+  const riskLevelLabel = useMemo(() => {
+    if (!securityData) return "Not available";
+    const score = Math.max(0, Math.min(100, Number(securityData.trust_score ?? 0)));
+    if (score <= 50) return "Very Risk Address";
+    if (score <= 80) return "Moderate Risk Address";
+    return "Safe Address";
+  }, [securityData]);
+
   return (
     <div className="space-y-6">
       <section className="grid gap-4 md:grid-cols-4">
@@ -184,7 +192,7 @@ const DashboardPage = ({ walletAddress }: DashboardPageProps) => {
               <div className="rounded-md bg-slate-800/75 p-3">
                 <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Risk Level</p>
                 <p className="text-base font-semibold text-amber-400">
-                  {securityData.high_risk ? "High Risk Address" : "No High Risk Flags"}
+                  {riskLevelLabel}
                 </p>
               </div>
               <div className="rounded-md bg-slate-800/75 p-3">
