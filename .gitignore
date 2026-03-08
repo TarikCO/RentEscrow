@@ -25,3 +25,5 @@ backend/venv/
 blockchain/artifacts/
 
 blockchain/cache/
+
+.vscode_hardhat_config*

@@ -1,18 +1,20 @@
-const hre = require("hardhat");
+import hre from 'hardhat';
+const { ethers } = hre;
 
 async function main() {
+
   // Get deployer account
-  const [deployer] = await hre.ethers.getSigners();
+  const [deployer] = await ethers.getSigners();
   console.log("Deploying contracts with account:", deployer.address);
 
   // Parameters for RentEscrow contract
-  const landlordAddress = "0xLandlordAddressHere"; // Replace with a test wallet or real address
+  const landlordAddress = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"; // Replace with a test wallet or real address
   const durationSeconds = 7 * 24 * 60 * 60; // 7 days escrow duration
   const yieldPercent = 3; // 3% yield
-  const depositAmount = hre.ethers.utils.parseEther("1"); // 1 ETH rent deposit for testing
+  const depositAmount = ethers.parseEther("1"); // 1 ETH rent deposit for testing
 
   // Get the contract factory
-  const RentEscrow = await hre.ethers.getContractFactory("RentEscrow");
+  const RentEscrow = await ethers.getContractFactory("RentEscrow");
 
   // Deploy the contract with the constructor arguments
   const escrow = await RentEscrow.deploy(
@@ -23,12 +25,13 @@ async function main() {
   );
 
   // Wait for deployment to finish
-  await escrow.deployed();
+  await escrow.waitForDeployment();
+  const contractAddress = await escrow.getAddress();
 
-  console.log("RentEscrow deployed to:", escrow.address);
+  console.log("RentEscrow deployed to:", contractAddress);
   console.log("Tenant (deployer) address:", deployer.address);
   console.log("Landlord address:", landlordAddress);
-  console.log("Escrow amount (ETH):", hre.ethers.utils.formatEther(depositAmount));
+  console.log("Escrow amount (ETH):", ethers.formatEther(depositAmount));
   console.log("Yield %:", yieldPercent);
   console.log("Escrow deadline (unix timestamp):", (Math.floor(Date.now() / 1000) + durationSeconds));
 }

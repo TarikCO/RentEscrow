@@ -13,12 +13,11 @@ class BlockchainService:
         # 1. Connect to the local Hardhat node
         self.w3 = Web3(Web3.HTTPProvider(HARDHAT_URL))
         
-        # 2. PLACEHOLDER: Contract Address
         # Replace this string after you run: npx hardhat ignition deploy ...
-        self.contract_address = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+        self.contract_address = settings.rent_escrow_address
 
         # landlord address
-        self.landlord_address = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+        self.landlord_address = settings.landlord_address
         
         # 3. Load the ABI from your Hardhat artifacts
         self.abi = self._load_abi()
@@ -61,6 +60,23 @@ class BlockchainService:
         # Accessing 'delivered' public variable from your screenshot
         is_delivered = self.contract.functions.delivered().call()
         return "Delivered" if is_delivered else "In Progress"
+    
+    def get_landlord_rating(self):
+        if not self.contract:
+            return 0.0
+        
+        try:
+            # 1. Call the contract function
+            # This returns the scaled integer (e.g., 450 for a 4.5 rating)
+            scaled_rating = self.contract.functions.getAverageRating().call()
+            
+            # 2. Divide by 100 to get the actual decimal
+            actual_rating = scaled_rating / 100.0
+            
+            return actual_rating
+        except Exception as e:
+            print(f"Error fetching rating: {e}")
+            return 0.0
         
     def check_connection(self):
         return self.w3.is_connected() # Verify if node is live

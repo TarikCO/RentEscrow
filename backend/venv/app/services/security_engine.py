@@ -1,8 +1,11 @@
 import requests
+from app.core.config import get_settings
+
+settings = get_settings()
 
 def get_address_security_score(address: str):
     # API endpoint for the Malicious Address check
-    url = f"https://api.gopluslabs.io/api/v1/address_security/{address}?chain_id=1"
+    url = f"https://api.gopluslabs.io/api/v1/address_security/{address}?chain_id={settings.chain_id}"
     response = requests.get(url)
     data = response.json()
     result = data.get("result", {})

@@ -6,7 +6,11 @@ class Settings(BaseSettings):
     # These must match the names in your .env file
     goplus_api_key: str
     goplus_api_secret: str
+    rent_escrow_address: str
+    landlord_address: str
     hardhat_url: str = "http://127.0.0.1:8545"
+    chain_id: str = "1"
+    private_key: str
     
     # This tells Pydantic to look for the .env file in your backend root
     model_config = SettingsConfigDict(

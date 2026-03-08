@@ -34,11 +34,11 @@ contract RentEscrow {
         emit Deposited(msg.sender, amount);
     }
 
-    function deposit() public payable {
+    /* function deposit() public payable {
         require(msg.sender == tenant, "Only tenant can deposit");
         require(msg.value == amount, "Incorrect deposit amount");
         emit Deposited(msg.sender, msg.value);
-    }
+    } */
 
     function confirmLease() public {
         require(msg.sender == tenant, "Only tenant can confirm lease");
@@ -49,9 +49,11 @@ contract RentEscrow {
     function releaseFunds() public {
         require(confirmed, "Lease not confirmed");
         uint yieldAmount = (amount * yieldPercent) / 100;
-        payable(landlord).transfer(amount);
+        uint finalLandlordAmount = amount - yieldAmount;
+        
+        payable(landlord).transfer(finalLandlordAmount);
         payable(tenant).transfer(yieldAmount);
-        emit Released(amount, yieldAmount);
+        emit Released(finalLandlordAmount, yieldAmount);
     }
 
     function refund() public {
