@@ -259,7 +259,7 @@ export const escrowService = {
 
   statusLabel(status: EscrowStatus) {
     const labels: Record<EscrowStatus, string> = {
-      pending: "Pending Confirmation",
+      pending: "Awaiting Confirmations",
       confirmed: "Lease Confirmed",
       released: "Funds Released",
       refunded: "Refunded",

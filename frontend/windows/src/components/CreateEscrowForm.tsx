@@ -7,7 +7,7 @@ import { CreateEscrowInput } from "@/types/escrow";
 
 interface CreateEscrowFormProps {
   walletAddress: string | null;
-  onCreate: (data: CreateEscrowInput, tenant: string) => void;
+  onCreate: (data: CreateEscrowInput, tenant: string) => Promise<void>;
 }
 
 const initialState: CreateEscrowInput = {
@@ -25,7 +25,7 @@ const CreateEscrowForm = ({ walletAddress, onCreate }: CreateEscrowFormProps) =>
 
   const isDisabled = useMemo(() => !walletAddress, [walletAddress]);
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!walletAddress) {
@@ -49,9 +49,13 @@ const CreateEscrowForm = ({ walletAddress, onCreate }: CreateEscrowFormProps) =>
       return;
     }
 
-    onCreate(form, walletAddress);
-    setValidationError(null);
-    setForm(initialState);
+    try {
+      await onCreate(form, walletAddress);
+      setValidationError(null);
+      setForm(initialState);
+    } catch (err) {
+      setValidationError(err instanceof Error ? err.message : "Failed to deploy escrow.");
+    }
   };
 
   return (
@@ -116,10 +120,14 @@ const CreateEscrowForm = ({ walletAddress, onCreate }: CreateEscrowFormProps) =>
             </label>
           </div>
 
-          {validationError ? <p className="text-sm text-red-600">{validationError}</p> : null}
+          {!walletAddress ? (
+            <p className="text-sm text-amber-300">Connect your wallet to enable escrow creation.</p>
+          ) : null}
 
-          <Button disabled={isDisabled} className="w-full md:w-fit">
-            Deposit & Deploy Escrow
+          {validationError ? <p className="text-sm text-red-300">{validationError}</p> : null}
+
+          <Button type="submit" disabled={isDisabled} className="w-full md:w-fit">
+            {isDisabled ? "Connect Wallet To Continue" : "Deposit & Deploy Escrow"}
           </Button>
         </form>
       </CardContent>

@@ -6,7 +6,7 @@ import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, Typed
   
 
   export interface RentEscrowInterface extends Interface {
-    getFunction(nameOrSignature: "amount" | "confirmLease" | "confirmed" | "deadline" | "getAverageRating" | "getNumRatings" | "landlord" | "numRatings" | "rateLandlord" | "refund" | "releaseFunds" | "tenant" | "totalRating" | "yieldPercent"): FunctionFragment;
+    getFunction(nameOrSignature: "amount" | "confirmLease" | "confirmed" | "deadline" | "getAverageRating" | "getNumRatings" | "landlord" | "landlordConfirmed" | "numRatings" | "rateLandlord" | "refund" | "releaseFunds" | "tenant" | "tenantConfirmed" | "totalRating" | "yieldPercent"): FunctionFragment;
 
     getEvent(nameOrSignatureOrTopic: "Confirmed" | "Deposited" | "Rated" | "Refunded" | "Released"): EventFragment;
 
@@ -17,11 +17,13 @@ encodeFunctionData(functionFragment: 'deadline', values?: undefined): string;
 encodeFunctionData(functionFragment: 'getAverageRating', values?: undefined): string;
 encodeFunctionData(functionFragment: 'getNumRatings', values?: undefined): string;
 encodeFunctionData(functionFragment: 'landlord', values?: undefined): string;
+encodeFunctionData(functionFragment: 'landlordConfirmed', values?: undefined): string;
 encodeFunctionData(functionFragment: 'numRatings', values?: undefined): string;
 encodeFunctionData(functionFragment: 'rateLandlord', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'refund', values?: undefined): string;
 encodeFunctionData(functionFragment: 'releaseFunds', values?: undefined): string;
 encodeFunctionData(functionFragment: 'tenant', values?: undefined): string;
+encodeFunctionData(functionFragment: 'tenantConfirmed', values?: undefined): string;
 encodeFunctionData(functionFragment: 'totalRating', values?: undefined): string;
 encodeFunctionData(functionFragment: 'yieldPercent', values?: undefined): string;
 
@@ -32,20 +34,22 @@ decodeFunctionResult(functionFragment: 'deadline', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'getAverageRating', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'getNumRatings', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'landlord', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'landlordConfirmed', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'numRatings', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'rateLandlord', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'refund', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'releaseFunds', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'tenant', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'tenantConfirmed', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'totalRating', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'yieldPercent', data: BytesLike): Result;
   }
 
   
     export namespace ConfirmedEvent {
-      export type InputTuple = [];
-      export type OutputTuple = [];
-      export interface OutputObject {};
+      export type InputTuple = [by: AddressLike, tenantConfirmed: boolean, landlordConfirmed: boolean];
+      export type OutputTuple = [by: string, tenantConfirmed: boolean, landlordConfirmed: boolean];
+      export interface OutputObject {by: string, tenantConfirmed: boolean, landlordConfirmed: boolean };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -192,6 +196,14 @@ decodeFunctionResult(functionFragment: 'yieldPercent', data: BytesLike): Result;
     
 
     
+    landlordConfirmed: TypedContractMethod<
+      [],
+      [boolean],
+      'view'
+    >
+    
+
+    
     numRatings: TypedContractMethod<
       [],
       [bigint],
@@ -227,6 +239,14 @@ decodeFunctionResult(functionFragment: 'yieldPercent', data: BytesLike): Result;
     tenant: TypedContractMethod<
       [],
       [string],
+      'view'
+    >
+    
+
+    
+    tenantConfirmed: TypedContractMethod<
+      [],
+      [boolean],
       'view'
     >
     
@@ -285,6 +305,11 @@ getFunction(nameOrSignature: 'landlord'): TypedContractMethod<
       [string],
       'view'
     >;
+getFunction(nameOrSignature: 'landlordConfirmed'): TypedContractMethod<
+      [],
+      [boolean],
+      'view'
+    >;
 getFunction(nameOrSignature: 'numRatings'): TypedContractMethod<
       [],
       [bigint],
@@ -310,6 +335,11 @@ getFunction(nameOrSignature: 'tenant'): TypedContractMethod<
       [string],
       'view'
     >;
+getFunction(nameOrSignature: 'tenantConfirmed'): TypedContractMethod<
+      [],
+      [boolean],
+      'view'
+    >;
 getFunction(nameOrSignature: 'totalRating'): TypedContractMethod<
       [],
       [bigint],
@@ -329,7 +359,7 @@ getEvent(key: 'Released'): TypedContractEvent<ReleasedEvent.InputTuple, Released
 
     filters: {
       
-      'Confirmed()': TypedContractEvent<ConfirmedEvent.InputTuple, ConfirmedEvent.OutputTuple, ConfirmedEvent.OutputObject>;
+      'Confirmed(address,bool,bool)': TypedContractEvent<ConfirmedEvent.InputTuple, ConfirmedEvent.OutputTuple, ConfirmedEvent.OutputObject>;
       Confirmed: TypedContractEvent<ConfirmedEvent.InputTuple, ConfirmedEvent.OutputTuple, ConfirmedEvent.OutputObject>;
     
 

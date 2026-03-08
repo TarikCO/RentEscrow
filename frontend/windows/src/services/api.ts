@@ -28,10 +28,44 @@ export interface EscrowOverviewResponse {
   tenant: string | null;
   landlord: string | null;
   deadline: number | null;
+  rent_amount_eth: number | null;
+  yield_percent: number | null;
+  tenant_confirmed: boolean | null;
+  landlord_confirmed: boolean | null;
+}
+
+interface TxResponse {
+  transaction_hash: string;
+}
+
+interface CreateEscrowResponse extends TxResponse {
+  contract_address: string;
 }
 
 const request = async <T>(path: string): Promise<T> => {
   const response = await fetch(`${API_BASE_URL}${path}`);
+
+  if (!response.ok) {
+    let details = "";
+    try {
+      details = await response.text();
+    } catch {
+      details = "";
+    }
+    throw new Error(`API request failed (${response.status}): ${details || response.statusText}`);
+  }
+
+  return response.json() as Promise<T>;
+};
+
+const postRequest = async <T>(path: string, payload: unknown): Promise<T> => {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
   if (!response.ok) {
     let details = "";
@@ -64,3 +98,22 @@ export const getLandlordRating = async () => request<LandlordRatingResponse>("/l
 export const getConnectionStatus = async () => request<ConnectionStatusResponse>("/connection-status");
 
 export const getEscrowOverview = async () => request<EscrowOverviewResponse>("/escrow-overview");
+
+export const createEscrowOnChain = async (payload: {
+  landlord: string;
+  rent_amount_eth: string;
+  yield_percent: number;
+  duration_days: number;
+}) => postRequest<CreateEscrowResponse>("/escrow/create", payload);
+
+export const confirmEscrowOnChain = async (actor: "tenant" | "landlord") =>
+  postRequest<TxResponse>("/escrow/confirm", { actor });
+
+export const releaseEscrowOnChain = async (actor: "tenant" | "landlord") =>
+  postRequest<TxResponse>("/escrow/release", { actor });
+
+export const refundEscrowOnChain = async (actor: "tenant" | "landlord") =>
+  postRequest<TxResponse>("/escrow/refund", { actor });
+
+export const rateLandlordOnChain = async (score: number, actor: "tenant" | "landlord") =>
+  postRequest<TxResponse>("/escrow/rate", { score, actor });

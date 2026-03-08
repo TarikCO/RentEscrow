@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     goplus_api_secret: str
     rent_escrow_address: str
     landlord_address: str
+    landlord_private_key: str | None = None
     hardhat_url: str = "http://127.0.0.1:8545"
     chain_id: str = "1"
     private_key: str

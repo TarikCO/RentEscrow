@@ -5,7 +5,9 @@ contract RentEscrow {
     address public tenant; // buyer
     address public landlord; // seller
     uint public amount; // rent amount
-    bool public confirmed; // delivery confirmed (lease accepted)
+    bool public confirmed; // true only after tenant and landlord both confirm
+    bool public tenantConfirmed;
+    bool public landlordConfirmed;
     uint public deadline; // timestamp for refund
     uint public yieldPercent; // like 3%
 
@@ -15,7 +17,7 @@ contract RentEscrow {
 
     // events
     event Deposited(address indexed from, uint value);
-    event Confirmed();
+    event Confirmed(address indexed by, bool tenantConfirmed, bool landlordConfirmed);
     event Released(uint value, uint yield);
     event Refunded(uint value);
     event Rated(address indexed by, uint score);
@@ -41,9 +43,16 @@ contract RentEscrow {
     } */
 
     function confirmLease() public {
-        require(msg.sender == tenant, "Only tenant can confirm lease");
-        confirmed = true;
-        emit Confirmed();
+        require(msg.sender == tenant || msg.sender == landlord, "Only tenant or landlord can confirm lease");
+
+        if (msg.sender == tenant) {
+            tenantConfirmed = true;
+        } else {
+            landlordConfirmed = true;
+        }
+
+        confirmed = tenantConfirmed && landlordConfirmed;
+        emit Confirmed(msg.sender, tenantConfirmed, landlordConfirmed);
     }
 
     function releaseFunds() public {

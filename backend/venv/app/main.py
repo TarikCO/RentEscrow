@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
 from app.services.security_engine import get_address_security_score
 from app.services.blockchain import BlockchainService
 from dotenv import load_dotenv
@@ -18,6 +19,22 @@ app.add_middleware(
 )
 
 blockchain_service = BlockchainService()
+
+
+class CreateEscrowRequest(BaseModel):
+    landlord: str
+    rent_amount_eth: str
+    yield_percent: int = Field(ge=0, le=100)
+    duration_days: int = Field(ge=1, le=365)
+
+
+class ActorRequest(BaseModel):
+    actor: str | None = "tenant"
+
+
+class RateRequest(BaseModel):
+    score: int = Field(ge=1, le=5)
+    actor: str | None = "tenant"
 
 
 def ensure_blockchain_connected():
@@ -72,3 +89,57 @@ async def get_escrow_overview():
     ensure_blockchain_connected()
     ensure_contract_loaded()
     return blockchain_service.get_escrow_overview()
+
+
+@app.post("/escrow/create")
+async def create_escrow(payload: CreateEscrowRequest):
+    ensure_blockchain_connected()
+    try:
+        return blockchain_service.deploy_escrow(
+            landlord=payload.landlord,
+            duration_days=payload.duration_days,
+            yield_percent=payload.yield_percent,
+            rent_amount_eth=payload.rent_amount_eth,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+@app.post("/escrow/confirm")
+async def confirm_escrow(payload: ActorRequest):
+    ensure_blockchain_connected()
+    ensure_contract_loaded()
+    try:
+        return blockchain_service.confirm_lease(payload.actor)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+@app.post("/escrow/release")
+async def release_escrow(payload: ActorRequest):
+    ensure_blockchain_connected()
+    ensure_contract_loaded()
+    try:
+        return blockchain_service.release_funds(payload.actor)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+@app.post("/escrow/refund")
+async def refund_escrow(payload: ActorRequest):
+    ensure_blockchain_connected()
+    ensure_contract_loaded()
+    try:
+        return blockchain_service.refund(payload.actor)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+@app.post("/escrow/rate")
+async def rate_escrow(payload: RateRequest):
+    ensure_blockchain_connected()
+    ensure_contract_loaded()
+    try:
+        return blockchain_service.rate_landlord(score=payload.score, actor=payload.actor)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
