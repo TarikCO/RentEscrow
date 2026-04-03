@@ -28,6 +28,8 @@ const DashboardPage = ({ walletAddress }: DashboardPageProps) => {
     releaseFunds,
     requestRefund,
     rateLandlord,
+    removeEscrow,
+    clearEscrows,
   } = useEscrows(walletAddress ?? undefined);
 
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -61,6 +63,14 @@ const DashboardPage = ({ walletAddress }: DashboardPageProps) => {
     return Object.entries(securityData.risk_details)
       .filter(([, value]) => value)
       .map(([key]) => key.split("_").join(" "));
+  }, [securityData]);
+
+  const riskLevelLabel = useMemo(() => {
+    if (!securityData) return "Not available";
+    const score = Math.max(0, Math.min(100, Number(securityData.trust_score ?? 0)));
+    if (score <= 50) return "Very Risk Address";
+    if (score <= 80) return "Moderate Risk Address";
+    return "Safe Address";
   }, [securityData]);
 
   return (
@@ -182,7 +192,7 @@ const DashboardPage = ({ walletAddress }: DashboardPageProps) => {
               <div className="rounded-md bg-slate-800/75 p-3">
                 <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Risk Level</p>
                 <p className="text-base font-semibold text-amber-400">
-                  {securityData.high_risk ? "High Risk Address" : "No High Risk Flags"}
+                  {riskLevelLabel}
                 </p>
               </div>
               <div className="rounded-md bg-slate-800/75 p-3">
@@ -199,6 +209,34 @@ const DashboardPage = ({ walletAddress }: DashboardPageProps) => {
           <PlusCircle className="h-4 w-4" />
           {showCreateForm ? "Hide Create Form" : "Create New Escrow"}
         </Button>
+        <Button
+          variant="outline"
+          className="border-red-300 text-red-700 hover:bg-red-50"
+          onClick={() => {
+            const ok = window.confirm("Remove all escrows from this dashboard list? This does not delete on-chain contracts.");
+            if (ok) {
+              void clearEscrows();
+              setSelectedEscrow(null);
+            }
+          }}
+        >
+          Clear Escrow List
+        </Button>
+        {selectedEscrow ? (
+          <Button
+            variant="outline"
+            className="border-amber-300 text-amber-700 hover:bg-amber-50"
+            onClick={() => {
+              const ok = window.confirm(`Remove ${selectedEscrow.address} from dashboard list?`);
+              if (ok) {
+                void removeEscrow(selectedEscrow.address);
+                setSelectedEscrow(null);
+              }
+            }}
+          >
+            Remove Selected Escrow
+          </Button>
+        ) : null}
       </div>
 
       {showCreateForm ? <CreateEscrowForm walletAddress={walletAddress} onCreate={createEscrow} /> : null}
