@@ -16,14 +16,19 @@
 # Hardhat coverage reports
 /coverage
 
+# .env files
 **/*.env
 
+# Python virtual environment
 backend/venv/
 
+# Python cache files
 **/__pycache__/
 
+# Hardhat artifacts and cache (v2)
 blockchain/artifacts/
 
 blockchain/cache/
 
+# VSCode settings that may contain sensitive info
 .vscode_hardhat_config*

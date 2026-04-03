@@ -3,7 +3,7 @@ from functools import lru_cache
 import os
 
 class Settings(BaseSettings):
-    # These must match the names in your .env file
+    # all config variables, matching the .env file
     goplus_api_key: str
     goplus_api_secret: str
     rent_escrow_address: str

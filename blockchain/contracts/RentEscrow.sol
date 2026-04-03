@@ -56,9 +56,13 @@ contract RentEscrow {
     }
 
     function releaseFunds() public {
+        require(msg.sender == tenant || msg.sender == landlord, "Unauthorized");
         require(confirmed, "Lease not confirmed");
         uint yieldAmount = (amount * yieldPercent) / 100;
         uint finalLandlordAmount = amount - yieldAmount;
+
+        amount = 0;
+        confirmed = false;
         
         payable(landlord).transfer(finalLandlordAmount);
         payable(tenant).transfer(yieldAmount);
@@ -69,19 +73,28 @@ contract RentEscrow {
         require(msg.sender == tenant, "Only tenant can refund");
         require(!confirmed, "Already confirmed");
         require(block.timestamp >= deadline, "Too early to refund");
-        payable(tenant).transfer(amount);
-        emit Refunded(amount);
+
+        uint refundAmount = amount;
+        amount = 0;
+        confirmed = false;
+
+        payable(tenant).transfer(refundAmount);
+        emit Refunded(refundAmount);
     }
 
     // rate landlord
+    bool public hasRated;
+
     function rateLandlord(uint score) public {
         require(msg.sender == tenant, "Only tenant can rate");
         require(confirmed, "Lease not confirmed");
+        require(!hasRated, "Already rated");
         require(score >= 1 && score <= 5, "Score 1-5");
+        hasRated = true;
         totalRating += score;
         numRatings += 1;
         emit Rated(msg.sender, score);
-    }
+    }   
 
     function getAverageRating() public view returns (uint) {
         if (numRatings == 0) return 0;

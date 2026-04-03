@@ -1,15 +1,25 @@
 import requests
+import hashlib
+import hmac
+import time
 from app.core.config import get_settings
 
 settings = get_settings()
 
 def get_address_security_score(address: str):
-    # API endpoint for the Malicious Address check
     url = f"https://api.gopluslabs.io/api/v1/address_security/{address}?chain_id={settings.chain_id}"
+    
+    # GoPlus free-tier: just pass the API key as a header
+    headers = {
+        "Authorization": settings.goplus_api_key
+    }
     try:
-        response = requests.get(url, timeout=12)
+        response = requests.get(url, headers=headers, timeout=12)
         response.raise_for_status()
         data = response.json()
+        if data.get("code") != 1:
+            raise ValueError(f"GoPlus API error: {data.get('message', 'Unknown error')}")
+        
     except requests.RequestException as exc:
         return {
             "address": address,
