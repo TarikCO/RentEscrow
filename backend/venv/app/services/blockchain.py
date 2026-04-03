@@ -12,9 +12,6 @@ HARDHAT_URL = settings.hardhat_url
 class BlockchainService:
     def __init__(self):
         self.w3 = Web3(Web3.HTTPProvider(HARDHAT_URL))
-        
-        # 2. Load the contract address from .env
-        self.contract_address = settings.rent_escrow_address
 
         # Load landlord address from .env
         self.contract_address = settings.rent_escrow_address
@@ -132,7 +129,9 @@ class BlockchainService:
 
     def _actor_private_key(self, actor: str | None):
         if actor == "landlord":
-            return settings.landlord_private_key or "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
+            if not settings.landlord_private_key:
+                raise ValueError("landlord_private_key is not set in .env")
+            return settings.landlord_private_key
         return settings.private_key
 
     def _sign_and_send(self, tx: dict, private_key: str):

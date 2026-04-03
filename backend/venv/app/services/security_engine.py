@@ -19,8 +19,7 @@ def get_address_security_score(address: str):
         data = response.json()
         if data.get("code") != 1:
             raise ValueError(f"GoPlus API error: {data.get('message', 'Unknown error')}")
-        
-    except requests.RequestException as exc:
+    except (requests.RequestException, ValueError) as exc:
         return {
             "address": address,
             "high_risk": False,
@@ -32,6 +31,7 @@ def get_address_security_score(address: str):
                 "sanctioned": False,
                 "mixer": False,
                 "poisoned": False,
+                "unverified": False,
             },
             "error": f"Security provider request failed: {exc}",
             "raw_data": {},
@@ -54,12 +54,9 @@ def get_address_security_score(address: str):
         "phishing": result.get("phishing_activities") == "1",
         "blacklisted": result.get("blacklisted") == "1",
         "honeypot_related": result.get("honeypot_related_address") == "1",
-        "sanctioned": result.get("sanctioned") == "1", 
-        "mixer": result.get("mixer") == "1",         
-        "poisoned": result.get("address_poisoned") == "1" 
-        "sanctioned": result.get("sanctioned") == "1", # High priority for FinTech
-        "mixer": result.get("mixer") == "1",           # Often used to hide stolen funds
-        "poisoned": result.get("address_poisoned") == "1", # Catch Dust/Shadow attacks
+        "sanctioned": result.get("sanctioned") == "1",        # High priority for FinTech
+        "mixer": result.get("mixer") == "1",                  # Often used to hide stolen funds
+        "poisoned": result.get("address_poisoned") == "1",    # Catch Dust/Shadow attacks
         "unverified": has_low_confidence_data or is_placeholder_address,
     }
 
